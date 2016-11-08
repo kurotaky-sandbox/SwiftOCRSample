@@ -102,7 +102,7 @@ class ViewController: UIViewController {
     @IBAction func takePhotoButtonPressed(sender: UIButton) {
         self.stillImageOutput.captureStillImageAsynchronouslyFromConnection(self.stillImageOutput.connectionWithMediaType(AVMediaTypeVideo)) { (buffer:CMSampleBuffer!, error:NSError!) -> Void in
             
-            guard let buffer = buffer, imageData = AVCaptureStillImageOutput.jpegStillImageNSDataRepresentation(buffer), let image = UIImage(data: imageData) else {
+            guard let buffer = buffer, let imageData = AVCaptureStillImageOutput.jpegStillImageNSDataRepresentation(buffer), let image = UIImage(data: imageData) else {
                 return
             }
             
@@ -171,30 +171,30 @@ class ViewController: UIViewController {
         let colorSpace = CGImageGetColorSpace(cgImage)
         let bitmapInfo = CGImageGetBitmapInfo(cgImage)
         
-        let context = CGBitmapContextCreate(nil, Int(width), Int(height), bitsPerComponent, bytesPerRow, colorSpace, bitmapInfo.rawValue)
+        let context = CGBitmapContextCreate(nil, Int(width), Int(height), bitsPerComponent, bytesPerRow, colorSpace!, bitmapInfo.rawValue)
         
-        CGContextSetInterpolationQuality(context, CGInterpolationQuality.None)
+        CGContextSetInterpolationQuality(context!, CGInterpolationQuality.None)
         
         // Rotate the image context
-        CGContextRotateCTM(context, degreesToRadians(degree));
+        CGContextRotateCTM(context!, degreesToRadians(degree));
         
         // Now, draw the rotated/scaled image into the context
-        CGContextScaleCTM(context, -1.0, -1.0)
+        CGContextScaleCTM(context!, -1.0, -1.0)
         
         //Crop
         
         switch imageOrientation {
         case .Right, .RightMirrored:
-            CGContextDrawImage(context, CGRectMake(-height, 0, height, width), cgImage)
+            CGContextDrawImage(context!, CGRectMake(-height, 0, height, width), cgImage)
         case .Left, .LeftMirrored:
-            CGContextDrawImage(context, CGRectMake(0, -width, height, width), cgImage)
+            CGContextDrawImage(context!, CGRectMake(0, -width, height, width), cgImage)
         case .Up, .UpMirrored:
-            CGContextDrawImage(context, CGRectMake(0, 0, width, height), cgImage)
+            CGContextDrawImage(context!, CGRectMake(0, 0, width, height), cgImage)
         case .Down, .DownMirrored:
-            CGContextDrawImage(context, CGRectMake(-width, -height, width, height), cgImage)
+            CGContextDrawImage(context!, CGRectMake(-width, -height, width, height), cgImage)
         }
         
-        let scaledCGImage = CGImageCreateWithImageInRect(CGBitmapContextCreateImage(context), CGRectMake(0, CGFloat((height - cropSize.height)/2.0), cropSize.width, cropSize.height))
+        let scaledCGImage = CGImageCreateWithImageInRect(CGBitmapContextCreateImage(context!)!, CGRectMake(0, CGFloat((height - cropSize.height)/2.0), cropSize.width, cropSize.height))
         
         return UIImage(CGImage: scaledCGImage!)
         
