@@ -10,47 +10,40 @@ import Cocoa
 import SwiftOCR
 
 class ViewController: NSViewController {
-
+    
     @IBOutlet weak var imageView: NSImageView!
     @IBOutlet weak var recognizedLabel: NSTextFieldCell!
     @IBOutlet weak var helperLabel: NSTextFieldCell!
-
+    
     var inputImage:NSImage?
-
+    
     let swiftOCRInstance = SwiftOCR()
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
         // Do any additional setup after loading the view.
     }
 
-    override var representedObject: AnyObject? {
-        didSet {
-        // Update the view, if already loaded.
-        }
-    }
-
-    @IBAction func imageDidChange(sender: NSImageView) {
-        helperLabel.textColor = NSColor.clearColor()
+    @IBAction func imageDidChange(_ sender: NSImageView) {
+        helperLabel.textColor = NSColor.clear
         inputImage = sender.image
         ocr()
     }
-
+    
     func ocr() {
-      
-      guard let image = inputImage else {
-        print("invalid image...")
-        return
-      }
-      
-      swiftOCRInstance.recognize(image, {recognizedString in
-            dispatch_async(dispatch_get_main_queue(), {
+        
+        guard let image = inputImage else {
+            print("invalid image...")
+            return
+        }
+        
+        swiftOCRInstance.recognize(image, {recognizedString in
+            DispatchQueue.main.async(execute: {
                 self.recognizedLabel.title = recognizedString
             })
         })
     }
-
-
+    
+    
 }
 
